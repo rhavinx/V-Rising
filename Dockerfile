@@ -14,6 +14,7 @@ RUN mkdir -p /home/VRisingServer /data && chmod +x /start.sh && useradd -ms /bin
     apt-get clean -y && apt-get autopurge -y && rm -rf /var/lib/apt/lists/*
 
 VOLUME ["/home/VRisingServer", "/data"]
+
 EXPOSE 27015/udp
 EXPOSE 27016/udp
 
