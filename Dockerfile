@@ -6,27 +6,23 @@ LABEL org.opencontainers.image.description="V Rising Dedicated Server"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
-
-ADD --chmod=755 https://dl.winehq.org/wine-builds/winehq.key /etc/apt/keyrings/winehq-archive.key
-ADD https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources /etc/apt/sources.list.d/winehq-trixie.sources
-
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
-    apt-get install -y --install-recommends winehq-stable && \
     apt-get install -y --no-install-recommends \
+        ca-certificates \
+        wine \
+        wine32 \
+        wine64 \
+        winbind \
         curl \
         unzip \
         xvfb \
         xauth \
-        winbind \
         gosu \
         jq \
         tzdata \
         procps && \
-    apt-get clean -y && apt-get autopurge -y && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 ARG DEPOT_DOWNLOADER_VERSION=3.4.0
