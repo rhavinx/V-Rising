@@ -15,7 +15,7 @@ RUN dpkg --add-architecture i386 && \
         wine64 \
         winbind \
         curl \
-        unzip \
+        lib32gcc-s1 \
         xvfb \
         xauth \
         gosu \
@@ -25,15 +25,14 @@ RUN dpkg --add-architecture i386 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-ARG DEPOT_DOWNLOADER_VERSION=3.4.0
-RUN curl -sL \
-    "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-linux-x64.zip" \
-    -o /tmp/dd.zip && \
-    unzip /tmp/dd.zip -d /depotdownloader && \
-    chmod +x /depotdownloader/DepotDownloader && \
-    rm /tmp/dd.zip
-
 RUN useradd -m -s /bin/bash steam
+
+# Bootstrap steamcmd — creates ~/.steam/sdk64/steamclient.so which Wine needs for Steamworks GameServer calls
+RUN mkdir -p /home/steam/steamcmd && \
+    curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | \
+        tar zxf - -C /home/steam/steamcmd && \
+    chown -R steam:steam /home/steam/steamcmd && \
+    su steam -c "/home/steam/steamcmd/steamcmd.sh +quit"
 
 ENV SERVERHOME="/home/steam/vrising/server"
 ENV GAMEDATA="/home/steam/vrising/data"

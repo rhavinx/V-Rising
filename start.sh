@@ -110,10 +110,12 @@ trap 'term_handler' SIGTERM
 
 install_server() {
     echo -e "${INFO}-> Installing / updating ${GAMENAME} server files...${NC}"
-    gosu steam:steam /depotdownloader/DepotDownloader \
-        -app ${APPID} \
-        -dir "${SERVERHOME}" \
-        -validate
+    gosu steam:steam /home/steam/steamcmd/steamcmd.sh \
+        +@sSteamCmdForcePlatformType windows \
+        +force_install_dir "${SERVERHOME}" \
+        +login anonymous \
+        +app_update ${APPID} validate \
+        +quit
 }
 
 copy_settings_templates() {
@@ -226,12 +228,8 @@ echo "${APPID}" > "${SERVERHOME}/steam_appid.txt"
 copy_settings_templates
 patch_host_settings
 
-# Bridge Linux steamclient.so so Wine can proxy Steamworks GameServer calls
-mkdir -p "/home/steam/.steam/sdk64"
-if [[ -f "${SERVERHOME}/linux64/steamclient.so" ]]; then
-    ln -sf "${SERVERHOME}/linux64/steamclient.so" "/home/steam/.steam/sdk64/steamclient.so"
-fi
 chown -R steam:steam "/home/steam/.steam"
+chown -R steam:steam "/home/steam/steamcmd"
 
 # Wine prefix in data volume — persistent, initialized once
 export WINEPREFIX="${GAMEDATA}/.wine"
