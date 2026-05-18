@@ -226,11 +226,19 @@ echo "${APPID}" > "${SERVERHOME}/steam_appid.txt"
 copy_settings_templates
 patch_host_settings
 
+# Bridge Linux steamclient.so so Wine can proxy Steamworks GameServer calls
+mkdir -p "/home/steam/.steam/sdk64"
+if [[ -f "${SERVERHOME}/linux64/steamclient.so" ]]; then
+    ln -sf "${SERVERHOME}/linux64/steamclient.so" "/home/steam/.steam/sdk64/steamclient.so"
+fi
+chown -R steam:steam "/home/steam/.steam"
+
 # Wine prefix in data volume — persistent, initialized once
 export WINEPREFIX="${GAMEDATA}/.wine"
 export WINEARCH=win64
 export WINEDLLOVERRIDES="mscoree,mshtml="
 export WINEDEBUG=-all
+export LD_LIBRARY_PATH="${SERVERHOME}/linux64:${SERVERHOME}:${LD_LIBRARY_PATH}"
 
 if [[ ! -d "${WINEPREFIX}" ]]; then
     echo -e "${INFO}Initializing Wine prefix (first run — this may take a moment)...${NC}"
