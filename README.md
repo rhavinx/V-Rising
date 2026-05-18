@@ -73,6 +73,7 @@ If DepotDownloader gets into a bad state or you want a clean reinstall:
 | SERVER_DESCRIPTION    | Server description | *(existing value)* |
 | SERVER_PASSWORD       | Join password | *(existing value)* |
 | MAX_PLAYERS           | Maximum player count | *(existing value)* |
+| MAX_ADMINS            | Maximum admin connections | *(existing value)* |
 | LIST_ON_STEAM         | List server in Steam server browser (`"true"`/`"false"`) | `"false"` |
 | REMOVE_SERVER_FILES   | Wipe server files for a clean reinstall (set to `"1"` for one launch only) | `"0"` |
 
@@ -91,6 +92,7 @@ services:
       # SERVER_DESCRIPTION: ""
       SERVER_PASSWORD: "changeme"
       MAX_PLAYERS: "8"
+      # MAX_ADMINS: "2"
       GAME_PORT: "9876"
       QUERY_PORT: "9877"
       SAVE_NAME: "world1"

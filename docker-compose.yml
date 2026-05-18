@@ -12,6 +12,7 @@ services:
       # SERVER_DESCRIPTION: ""
       SERVER_PASSWORD: "changeme"
       MAX_PLAYERS: "8"
+      # MAX_ADMINS: "2"
       GAME_PORT: "9876"
       QUERY_PORT: "9877"
       SAVE_NAME: "world1"
