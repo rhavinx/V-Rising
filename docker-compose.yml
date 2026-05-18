@@ -4,7 +4,7 @@ services:
     container_name: vrising
     stop_grace_period: 30s
     environment:
-      TZ: "America/Denver"
+      TZ: "UTC"
       # PUID: "1000"
       # PGID: "1000"
       SKIP_UPDATE: "0"
