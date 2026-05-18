@@ -1,0 +1,26 @@
+services:
+  vrising:
+    image: rhavinx/vrising:latest
+    container_name: vrising
+    stop_grace_period: 30s
+    environment:
+      TZ: "America/Denver"
+      # PUID: "1000"
+      # PGID: "1000"
+      SKIP_UPDATE: "0"
+      SERVER_NAME: "My V Rising Server"
+      # SERVER_DESCRIPTION: ""
+      SERVER_PASSWORD: "changeme"
+      MAX_PLAYERS: "8"
+      GAME_PORT: "9876"
+      QUERY_PORT: "9877"
+      SAVE_NAME: "world1"
+      LIST_ON_STEAM: "false"
+      # REMOVE_SERVER_FILES: "0"
+    volumes:
+      - /path/to/server:/home/steam/vrising/server
+      - /path/to/data:/home/steam/vrising/data
+    ports:
+      - "9876:9876/udp"
+      - "9877:9877/udp"
+    restart: unless-stopped

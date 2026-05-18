@@ -1,21 +1,56 @@
-FROM steamcmd/steamcmd:debian-13
+FROM debian:trixie-slim
 
-LABEL org.opencontainers.image.authors="RhavinX" \
-      org.opencontainers.image.source=https://github.com/RhavinX/V-Rising \
-      org.opencontainers.image.description="V Rising Dedicated Server"
+LABEL org.opencontainers.image.authors="rhavinx"
+LABEL org.opencontainers.image.source="https://github.com/rhavinx/vrising"
+LABEL org.opencontainers.image.description="V Rising Dedicated Server"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-COPY start.sh /start.sh
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
 ADD --chmod=755 https://dl.winehq.org/wine-builds/winehq.key /etc/apt/keyrings/winehq-archive.key
 ADD https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources /etc/apt/sources.list.d/winehq-trixie.sources
-RUN mkdir -p /home/VRisingServer /data && chmod +x /start.sh && useradd -ms /bin/bash steam && \
-    apt-get update -y && apt-get install -y --no-install-recommends tzdata xdg-user-dirs procps winehq-stable xvfb winbind && \
-    apt-get clean -y && apt-get autopurge -y && rm -rf /var/lib/apt/lists/*
 
-VOLUME ["/home/VRisingServer", "/data"]
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --install-recommends winehq-stable && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        unzip \
+        xvfb \
+        xauth \
+        winbind \
+        gosu \
+        jq \
+        tzdata \
+        procps && \
+    apt-get clean -y && apt-get autopurge -y && \
+    rm -rf /var/lib/apt/lists/*
 
-EXPOSE 27015/udp
-EXPOSE 27016/udp
+ARG DEPOT_DOWNLOADER_VERSION=3.4.0
+RUN curl -sL \
+    "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-linux-x64.zip" \
+    -o /tmp/dd.zip && \
+    unzip /tmp/dd.zip -d /depotdownloader && \
+    chmod +x /depotdownloader/DepotDownloader && \
+    rm /tmp/dd.zip
 
-ENTRYPOINT [ "/start.sh" ]
+RUN useradd -m -s /bin/bash steam
+
+ENV SERVERHOME="/home/steam/vrising/server"
+ENV GAMEDATA="/home/steam/vrising/data"
+
+COPY start.sh /start.sh
+
+RUN mkdir -p ${SERVERHOME} ${GAMEDATA} && \
+    chmod +x /start.sh && \
+    chown -R steam:steam /home/steam/vrising
+
+VOLUME ["/home/steam/vrising/server", "/home/steam/vrising/data"]
+
+EXPOSE 9876/udp
+EXPOSE 9877/udp
+
+ENTRYPOINT ["/start.sh"]
