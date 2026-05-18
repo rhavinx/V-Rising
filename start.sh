@@ -230,6 +230,7 @@ patch_host_settings
 
 chown -R steam:steam "/home/steam/.steam"
 chown -R steam:steam "/home/steam/steamcmd"
+chown -R steam:steam "/home/steam/Steam"
 
 # Wine prefix in data volume — persistent, initialized once
 export WINEPREFIX="${GAMEDATA}/.wine"

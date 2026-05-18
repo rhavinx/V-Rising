@@ -32,7 +32,7 @@ RUN mkdir -p /home/steam/steamcmd && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | \
         tar zxf - -C /home/steam/steamcmd && \
     chown -R steam:steam /home/steam/steamcmd && \
-    su steam -c "/home/steam/steamcmd/steamcmd.sh +quit"
+    su - steam -c "/home/steam/steamcmd/steamcmd.sh +quit"
 
 ENV SERVERHOME="/home/steam/vrising/server"
 ENV GAMEDATA="/home/steam/vrising/data"
