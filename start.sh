@@ -244,7 +244,7 @@ fi
 echo -e "${INFO}Launching ${GAMENAME} Dedicated Server...${NC}"
 cd "${SERVERHOME}" || exit 1
 gosu steam:steam xvfb-run --auto-servernum \
-    wine64 "${BINARY}" \
+    wine "${BINARY}" \
     -persistentDataPath "${GAMEDATA}" \
     -saveName "${SAVE_NAME}" &
 ServerPID=$!
