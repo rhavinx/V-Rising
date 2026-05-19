@@ -4,7 +4,7 @@
 
 Docker container for hosting a dedicated server for [V Rising](https://store.steampowered.com/app/1604030/V_Rising/). The game server is a Windows binary and runs under Wine.
 
-Server files are downloaded via [DepotDownloader](https://github.com/SteamRE/DepotDownloader) using an anonymous Steam login — no Steam account or credentials required.
+Server files are downloaded via [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) using an anonymous Steam login — no Steam account or credentials required.
 
 ## Container Data Life Cycle
 
@@ -27,7 +27,7 @@ Goto Loop
 │   └── Settings
 │       ├── ServerGameSettings.json   # Game settings — edit directly, not managed by container
 │       └── ServerHostSettings.json   # Host settings — patched by env vars on every start
-└── server                            # Volume bind mount, populated via DepotDownloader
+└── server                            # Volume bind mount, populated via SteamCMD
     ├── VRisingServer.exe
     └── VRisingServer_Data
         └── StreamingAssets
@@ -51,7 +51,7 @@ Goto Loop
 
 ## REMOVE_SERVER_FILES
 
-If DepotDownloader gets into a bad state or you want a clean reinstall:
+If SteamCMD gets into a bad state or you want a clean reinstall:
 
 - Set `REMOVE_SERVER_FILES: "1"` in your `docker-compose.yml` for **one** launch.
 - Then set it back to `"0"`. Your saves and settings are preserved in the data volume and will be intact on the next start.
@@ -65,7 +65,7 @@ If DepotDownloader gets into a bad state or you want a clean reinstall:
 | TZ                    | Timezone | `"UTC"` |
 | PUID                  | Numeric user ID | `"1000"` |
 | PGID                  | Numeric group ID | `"1000"` |
-| SKIP_UPDATE           | Skip DepotDownloader validation on start (faster startup, no update check) | `"0"` |
+| SKIP_UPDATE           | Skip SteamCMD validation on start (faster startup, no update check) | `"0"` |
 | GAME_PORT             | Game port (adjust port mapping if changed) | `"9876"` |
 | QUERY_PORT            | Query port (adjust port mapping if changed) | `"9877"` |
 | SAVE_NAME             | World save name — must match your existing save folder | `"world1"` |
@@ -113,9 +113,13 @@ services:
 
 ## Changelog
 
+* 19 May 2026:
+  - Switched from DepotDownloader to SteamCMD for server file downloads and Steam SDK bootstrap
+  - Fixed Steamworks GameServer init (correct client App ID in steam_appid.txt, correct HOME for Wine)
+
 * 18 May 2026:
   - Initial release
-  - debian:trixie-slim + WineHQ stable + DepotDownloader (self-contained, no .NET install required)
+  - debian:trixie-slim + Wine + SteamCMD
   - Two-volume layout: server binaries + persistent data
   - Environment variable patching of ServerHostSettings.json on every start
   - AVX/AVX2 detection with automatic DLL rename for non-AVX hardware
